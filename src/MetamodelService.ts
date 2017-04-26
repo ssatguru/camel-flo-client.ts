@@ -17,6 +17,7 @@ export class MetamodelService {
     // Internally stored metamodel load promise
     private request;
     
+    private grpToText:GraphToText;
     
     constructor($http, $q, $timeout, $log, metamodelUtils) {
         this.$http = $http;
@@ -24,7 +25,7 @@ export class MetamodelService {
         this.$timeout = $timeout;
         this.$log = $log;
         MetamodelService.metamodelUtils = metamodelUtils;
-       
+       this.grpToText = new GraphToText();
     }
 
     /**
@@ -84,7 +85,7 @@ export class MetamodelService {
     }
 
     public graphToText(flo, definition) {
-        definition.text = GraphToText.convert(flo.getGraph());
+        definition.text = this.grpToText.convert(flo.getGraph());
     }
 
     public textToGraph(flo, definition) {

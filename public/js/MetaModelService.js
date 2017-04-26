@@ -8,6 +8,7 @@ define(["require", "exports", "./GraphToText", "./TextToGraph", "json5", "text!m
             this.$timeout = $timeout;
             this.$log = $log;
             MetamodelService.metamodelUtils = metamodelUtils;
+            this.grpToText = new GraphToText_1.GraphToText();
         }
         MetamodelService.createMetadata = function (entry) {
             var props = {};
@@ -57,7 +58,7 @@ define(["require", "exports", "./GraphToText", "./TextToGraph", "json5", "text!m
             return this.request;
         };
         MetamodelService.prototype.graphToText = function (flo, definition) {
-            definition.text = GraphToText_1.GraphToText.convert(flo.getGraph());
+            definition.text = this.grpToText.convert(flo.getGraph());
         };
         MetamodelService.prototype.textToGraph = function (flo, definition) {
             flo.getGraph().clear();

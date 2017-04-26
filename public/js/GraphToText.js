@@ -4,15 +4,15 @@ define(["require", "exports"], function (require, exports) {
     var GraphToText = (function () {
         function GraphToText() {
         }
-        GraphToText.nextLink = function () {
+        GraphToText.prototype.nextLink = function () {
             var indegree = Number.MAX_VALUE;
             var currentBest;
-            for (var id in GraphToText.linksToVisit) {
-                var link = GraphToText.g.getCell(id);
-                var source = GraphToText.g.getCell(link.get('source').id);
-                var currentInDegree = GraphToText.nodesInDegrees[source.get('id')];
+            for (var id in this.linksToVisit) {
+                var link = this.g.getCell(id);
+                var source = this.g.getCell(link.get('source').id);
+                var currentInDegree = this.nodesInDegrees[source.get('id')];
                 if (currentInDegree === 0) {
-                    return GraphToText.visit(link);
+                    return this.visit(link);
                 }
                 else if (indegree > currentInDegree) {
                     indegree = currentInDegree;
@@ -20,65 +20,66 @@ define(["require", "exports"], function (require, exports) {
                 }
             }
             if (currentBest) {
-                return GraphToText.visit(currentBest);
+                return this.visit(currentBest);
             }
         };
-        GraphToText.visit = function (e) {
+        GraphToText.prototype.visit = function (e) {
             if (e.isLink()) {
-                delete GraphToText.linksToVisit[e.get('id')];
-                GraphToText.nodesInDegrees[e.get('target').id]--;
-                GraphToText.numberOfLinksToVisit--;
+                delete this.linksToVisit[e.get('id')];
+                this.nodesInDegrees[e.get('target').id]--;
+                this.numberOfLinksToVisit--;
             }
             else {
-                delete GraphToText.nodesToVisit[e.get('id')];
-                GraphToText.numberOfNodesToVisit--;
+                delete this.nodesToVisit[e.get('id')];
+                this.numberOfNodesToVisit--;
             }
             return e;
         };
-        GraphToText.init = function (graph) {
-            GraphToText.numberOfLinksToVisit = 0;
-            GraphToText.numberOfNodesToVisit = 0;
-            GraphToText.linksToVisit = {};
-            GraphToText.nodesToVisit = {};
-            GraphToText.nodesInDegrees = {};
-            GraphToText.g = graph;
-            GraphToText.g.getElements().forEach(function (element) {
+        GraphToText.prototype.init = function (graph) {
+            var that = this;
+            this.numberOfLinksToVisit = 0;
+            this.numberOfNodesToVisit = 0;
+            this.linksToVisit = {};
+            this.nodesToVisit = {};
+            this.nodesInDegrees = {};
+            this.g = graph;
+            this.g.getElements().forEach(function (element) {
                 if (element.attr('metadata/name')) {
-                    GraphToText.nodesToVisit[element.get('id')] = element;
+                    that.nodesToVisit[element.get('id')] = element;
                     var indegree = 0;
-                    GraphToText.g.getConnectedLinks(element, { inbound: true }).forEach(function (link) {
-                        if (link.get('source') && link.get('source').id && GraphToText.g.getCell(link.get('source').id) &&
-                            GraphToText.g.getCell(link.get('source').id).attr('metadata/name')) {
-                            GraphToText.linksToVisit[link.get('id')] = link;
-                            GraphToText.numberOfLinksToVisit++;
+                    that.g.getConnectedLinks(element, { inbound: true }).forEach(function (link) {
+                        if (link.get('source') && link.get('source').id && that.g.getCell(link.get('source').id) &&
+                            that.g.getCell(link.get('source').id).attr('metadata/name')) {
+                            that.linksToVisit[link.get('id')] = link;
+                            that.numberOfLinksToVisit++;
                             indegree++;
                         }
                     });
-                    GraphToText.nodesInDegrees[element.get('id')] = indegree;
-                    GraphToText.numberOfNodesToVisit++;
+                    that.nodesInDegrees[element.get('id')] = indegree;
+                    that.numberOfNodesToVisit++;
                 }
             });
         };
-        GraphToText.chainToText = function (link) {
+        GraphToText.prototype.chainToText = function (link) {
             var text = '';
-            var source = GraphToText.g.getCell(link.get('source').id);
-            text += GraphToText.nodeToText(source, true);
+            var source = this.g.getCell(link.get('source').id);
+            text += this.nodeToText(source, true);
             while (link) {
-                var target = GraphToText.g.getCell(link.get('target').id);
+                var target = this.g.getCell(link.get('target').id);
                 text += ' > ';
-                text += GraphToText.nodeToText(target, false);
+                text += this.nodeToText(target, false);
                 link = null;
-                var outgoingLinks = GraphToText.g.getConnectedLinks(target, { outbound: true });
+                var outgoingLinks = this.g.getConnectedLinks(target, { outbound: true });
                 for (var i = 0; i < outgoingLinks.length && !link; i++) {
-                    if (GraphToText.linksToVisit[outgoingLinks[i].get('id')]) {
+                    if (this.linksToVisit[outgoingLinks[i].get('id')]) {
                         source = target;
-                        link = GraphToText.visit(outgoingLinks[i]);
+                        link = this.visit(outgoingLinks[i]);
                     }
                 }
             }
             return text;
         };
-        GraphToText.nodeToText = function (element, junk) {
+        GraphToText.prototype.nodeToText = function (element, junk) {
             var text = '';
             var props = element.attr('props');
             if (!element) {
@@ -90,10 +91,10 @@ define(["require", "exports"], function (require, exports) {
                     text += ' --' + propertyName + '=' + props[propertyName];
                 });
             }
-            GraphToText.visit(element);
+            this.visit(element);
             return text;
         };
-        GraphToText.appendChainText = function (text, chainText) {
+        GraphToText.prototype.appendChainText = function (text, chainText) {
             if (chainText) {
                 if (text) {
                     text += '\n';
@@ -102,18 +103,18 @@ define(["require", "exports"], function (require, exports) {
             }
             return text;
         };
-        GraphToText.convert = function (g) {
+        GraphToText.prototype.convert = function (g) {
             var text = '';
             var chainText;
             var id;
-            GraphToText.init(g);
-            while (GraphToText.numberOfLinksToVisit) {
-                chainText = GraphToText.chainToText(GraphToText.nextLink());
-                text = GraphToText.appendChainText(text, chainText);
+            this.init(g);
+            while (this.numberOfLinksToVisit) {
+                chainText = this.chainToText(this.nextLink());
+                text = this.appendChainText(text, chainText);
             }
-            for (id in GraphToText.nodesToVisit) {
-                chainText = GraphToText.nodeToText(GraphToText.nodesToVisit[id], true);
-                text = GraphToText.appendChainText(text, chainText);
+            for (id in this.nodesToVisit) {
+                chainText = this.nodeToText(this.nodesToVisit[id], true);
+                text = this.appendChainText(text, chainText);
             }
             return text;
         };
