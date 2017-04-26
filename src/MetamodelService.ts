@@ -8,10 +8,10 @@ import "text!metamodel-sample.json" ;
 export class MetamodelService {
     
     private $http: angular.IHttpService;
-    private static $q: angular.IQService;
+    private  $q: angular.IQService;
     private $timeout: angular.ITimeoutService;
     private $log: angular.ILogService;
-    private static metamodelUtils;
+    private  metamodelUtils;
     private metamodel;
 
     // Internally stored metamodel load promise
@@ -21,10 +21,10 @@ export class MetamodelService {
     
     constructor($http, $q, $timeout, $log, metamodelUtils) {
         this.$http = $http;
-        MetamodelService.$q = $q;
+        this.$q = $q;
         this.$timeout = $timeout;
         this.$log = $log;
-        MetamodelService.metamodelUtils = metamodelUtils;
+        this.metamodelUtils = metamodelUtils;
        this.grpToText = new GraphToText();
     }
 
@@ -33,7 +33,8 @@ export class MetamodelService {
      * metamodel is 'cheap' to build. If it is costly to discover the actual properties
      * the getter may be more complex (e.g. make a REST request).
      */
-    private static createMetadata(entry) {
+    private createMetadata(entry) {
+        var that=this;
         var props = {};
         if (Array.isArray(entry.properties)) {
             entry.properties.forEach(function(property) {
@@ -53,7 +54,7 @@ export class MetamodelService {
             metadata: entry.metadata,
             properties: entry.properties,
             get: function(property) {
-                var deferred = MetamodelService.$q.defer();
+                var deferred = that.$q.defer();
                 if (entry.hasOwnProperty(property)) {
                     deferred.resolve(entry[property]);
                 } else {
@@ -68,11 +69,12 @@ export class MetamodelService {
         // COULDDO: to cache the result here, check result before doing this processing
         // and simply return it if it is set. If doing that may want to override refresh
         // in this service
+        var that = this;
         var metamodelData = JSON5.parse(require('text!metamodel-sample.json'));
-        var deferred = MetamodelService.$q.defer();
+        var deferred = this.$q.defer();
         var newData = {};
         metamodelData.forEach(function(data) {
-            var metadata = MetamodelService.createMetadata(data);
+            var metadata = that.createMetadata(data);
             if (!newData[metadata.group]) {
                 newData[metadata.group] = {};
             }
@@ -89,10 +91,11 @@ export class MetamodelService {
     }
 
     public textToGraph(flo, definition) {
+        var that=this;
         // TODO perhaps push these flo operations into the 'caller' to make this simpler
         flo.getGraph().clear();
         this.load().then(function(metamodel) {
-            TextToGraph.convert(definition.text, flo, metamodel, MetamodelService.metamodelUtils);
+            TextToGraph.convert(definition.text, flo, metamodel, that.metamodelUtils);
             flo.performLayout();
             flo.fitToPage();
         });
