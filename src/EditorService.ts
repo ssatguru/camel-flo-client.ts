@@ -416,16 +416,7 @@ export class EditorService {
         return !noSwap;
     }
 
-    //	        ret    urn {
-    //	            'createHandles': createHan    dles,
-    //	            'validatePort': validate    Port,
-    //	            'validateLink': validate    Link,
-    //	            'calculateDragDescriptor': calculateDragDescri    ptor,
-    //	            'handleNodeDropping': handleNodeDrop    ping,
-    //	            'validateNode': validate    Node,
-    //	            'preDelete': preDe    lete,
-
-    //	        };
+   
 
 
 
