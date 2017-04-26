@@ -1,14 +1,27 @@
 import joint = require("joint");
 import dagre = require("dagre");
-export class RenderService {
 
+
+/**
+spring-flo will call the following services if provided
+createNode
+initializeNewNode
+createLink
+initializeNewLink
+createDecoration
+initializeNewDecoration
+createHandle
+initializeNewHandle
+layout
+refreshVisuals
+handleLinkEvent
+ */
+export class RenderService {
 
     $log: ng.ILogService;
 
-    //dagre: any;
-
     HANDLE_ICON_MAP = {
-        'remove': 'icons/delete.svg',
+        'remove': 'icons/delete.svg'
     };
 
     DECORATION_ICON_MAP = {
@@ -67,7 +80,7 @@ export class RenderService {
                 '.': {
                     //filter: { name: 'dropShadow', args: { dx: 1, dy: 1, blur: 2 } } 
                 },
-                '.connection': { 'stroke-width': 3, 'stroke': 'black', 'stroke-linecap': 'round' },
+                '.connection': { 'stroke-width': 6, 'stroke': 'black', 'stroke-linecap': 'round' },
                 '.marker-arrowheads': { display: 'none' },
                 '.tool-options': { display: 'none' }
             },
