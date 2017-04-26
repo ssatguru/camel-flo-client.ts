@@ -1,0 +1,21 @@
+{
+  "name": "camel-flo-client",
+  "version": "1.0.0",
+  "keywords": [
+    "camel",
+    "spring-flo"
+  ],
+  "author": "satguru p srivastava",
+  "contributors": [],
+  "dependencies": {
+    "jointjs": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/angular": "^1.6.15",
+    "@types/jointjs": "^1.0.3",
+    "@types/json5": "0.0.29"
+  },
+  "scripts": {
+    "compile": "tsc -p src"
+  }
+}

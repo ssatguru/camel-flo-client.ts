@@ -1,0 +1,29 @@
+{
+  "name": "camel-flo-client",
+  "authors": [
+    "Satguru P Srivastava <ssatguru@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.6.4",
+    "requirejs": "2.1.18",
+    "jquery": "2.2.0",
+    "lodash": "3.10.1",
+    "domReady": "requirejs-domready#2.0.1",
+    "text": "requirejs-text#2.0.15",
+    "jointjs": "0.9.7",
+    "json5": "0.4.0",
+    "spring-flo": "0.6.0"
+  }
+}
